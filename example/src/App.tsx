@@ -1,10 +1,9 @@
 import React from 'react'
 
-import { ExampleComponent } from 'lualert'
-import 'lualert/dist/index.css'
+import withAlerts from 'lualert'
 
 const App = () => {
-  return <ExampleComponent text="Create React Library Example 😄" />
+  return <button onClick={() => window.Alert('Hello world')}>Show</button>
 }
 
-export default App
+export default withAlerts(App)

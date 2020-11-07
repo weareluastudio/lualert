@@ -1,6 +1,6 @@
 {
-  "name": "lualert",
-  "version": "1.0.0",
+  "name": "@weareluastudio/lualert",
+  "version": "1.2.0",
   "description": "customizable global alerts with nested reactjs components",
   "author": "weareluastudio",
   "license": "MIT",

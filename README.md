@@ -40,8 +40,15 @@ export default withAlerts(App)
 
 You can define some properties for all alerts in your application, such as color, text, and effects. For example with the hoc:
 
+**IMPORTANT: you need only one withAlerts() in your project. As a recommendation put it in the App component.**
+
 ```tsx
 // ALERT HOC
+export default withAlerts(App)
+```
+
+```tsx
+// ALERT HOC WITH GLOBAL PROPS
 export default withAlerts(App, { ...props })
 ```
 

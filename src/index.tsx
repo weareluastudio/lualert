@@ -5,10 +5,10 @@ import React, { CSSProperties, PureComponent } from 'react'
 const Styles: {
   alertContainer: CSSProperties
   alertContent: CSSProperties
-  alertContent_h1: CSSProperties
-  alertContent_p: CSSProperties
+  alertContentH1: CSSProperties
+  alertContentP: CSSProperties
   alertActions: CSSProperties
-  alertActions_li_button: CSSProperties
+  alertActionsLiButton: CSSProperties
   cancelBtn: CSSProperties
   closeAlert: CSSProperties
   openAlert: CSSProperties
@@ -49,7 +49,7 @@ const Styles: {
     fontFamily:
       "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif"
   },
-  alertContent_h1: {
+  alertContentH1: {
     color: '#333',
     fontSize: '2em',
     margin: 0,
@@ -57,7 +57,7 @@ const Styles: {
     boxSizing: 'border-box',
     fontWeight: 'bold'
   },
-  alertContent_p: {
+  alertContentP: {
     color: '#333',
     lineHeight: '20px',
     margin: 0,
@@ -73,7 +73,7 @@ const Styles: {
     boxSizing: 'border-box',
     zIndex: 3
   },
-  alertActions_li_button: {
+  alertActionsLiButton: {
     textTransform: 'uppercase',
     color: '#fff',
     border: 'none',
@@ -120,6 +120,7 @@ const Styles: {
 interface AlertProps {
   type: 'confirm' | 'window' | 'alert' | 'error'
   customElements?: JSX.Element
+  nested?: AlertProps | string
   confirmBtn?: JSX.Element
   cancelBtn?: JSX.Element
   onConfirm?: () => any
@@ -193,7 +194,10 @@ class AlertTemplate extends PureComponent<HOCProps, InternalState> {
   public hide() {
     if (!this.state.fixed) {
       if (this.state.onHide) this.state.onHide()
-      this.setState({ open: false })
+      const tmpNested: AlertProps | string | undefined = this.state.nested
+      this.setState({ open: false, nested: undefined }, () => {
+        if (tmpNested) this.show(tmpNested)
+      })
     }
   }
 
@@ -244,11 +248,11 @@ class AlertTemplate extends PureComponent<HOCProps, InternalState> {
           }
         >
           {this.state.type !== 'alert' && (
-            <h1 style={Styles.alertContent_h1}>{this.state.title}</h1>
+            <h1 style={Styles.alertContentH1}>{this.state.title}</h1>
           )}
           <p
             style={{
-              ...Styles.alertContent_p,
+              ...Styles.alertContentP,
               fontSize: this.state.type === 'alert' ? '1.2em' : '1em'
             }}
           >
@@ -275,7 +279,7 @@ class AlertTemplate extends PureComponent<HOCProps, InternalState> {
                 {!this.state.confirmBtn ? (
                   <button
                     style={{
-                      ...Styles.alertActions_li_button,
+                      ...Styles.alertActionsLiButton,
                       background:
                         this.state.type === 'error'
                           ? this.props.errColor || '#ff5252'
@@ -308,6 +312,7 @@ const withAlerts = (Component: React.FC<any>, props?: HOCProps) => {
   // COMPONENT
   const withAlertsComponent: React.FC = () => {
     return (
+      // eslint-disable-next-line react/jsx-fragments
       <React.Fragment>
         <Component />
         <AlertTemplate

@@ -76,6 +76,37 @@ window.Alert({
 })
 ```
 
+Nested alerts
+
+```tsx
+window.Alert({
+  title: 'Test1',
+  body: 'Test1',
+  type: 'confirm',
+  nested: 'Test2'
+})
+```
+
+```tsx
+window.Alert({
+  title: 'Test1',
+  body: 'Test1',
+  type: 'confirm',
+
+  nested: {
+    title: 'Test2',
+    body: 'Test2',
+    type: 'confirm',
+
+    nested: {
+      title: 'Test3',
+      body: 'Test3',
+      type: 'confirm'
+    }
+  }
+})
+```
+
 | Name           | Type                                        | Description                                                       | Default  | Optional |
 | -------------- | ------------------------------------------- | ----------------------------------------------------------------- | -------- | -------- |
 | type           | 'confirm' \| 'window' \| 'alert' \| 'error' | Define the alert style and interaction.                           | 'alert'  | false    |
@@ -89,6 +120,7 @@ window.Alert({
 | confirmBtn     | JSX.ELement                                 | Replace the whole "Accept" button for the current instance.       | null     | true     |
 | cancelText     | string                                      | Replace the "Cancel" label for the current instance.              | "Cancel" | true     |
 | cancelBtn      | JSX.Element                                 | Replace the whole "Cancel" button for the current instance.       | null     | true     |
+| nested         | AlertProps \| string                        | Show an alert after the current hides                             | null     | true     |
 
 ## Global API
 

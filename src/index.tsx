@@ -139,6 +139,7 @@ interface HOCProps {
   cancelText?: string
   errColor?: string
   blurred?: boolean
+  zIndex?: number
 }
 
 // ALERT STATE
@@ -225,12 +226,14 @@ class AlertTemplate extends PureComponent<HOCProps, InternalState> {
             ? {
                 ...Styles.alertContainer,
                 ...Styles.openAlert,
-                backdropFilter: this.props.blurred ? 'blur(3px)' : 'none'
+                backdropFilter: this.props.blurred ? 'blur(3px)' : 'none',
+                zIndex: this.props.zIndex || 100
               }
             : {
                 ...Styles.alertContainer,
                 ...Styles.closeAlert,
-                backdropFilter: this.props.blurred ? 'blur(3px)' : 'none'
+                backdropFilter: this.props.blurred ? 'blur(3px)' : 'none',
+                zIndex: this.props.zIndex || 100
               }
         }
       >

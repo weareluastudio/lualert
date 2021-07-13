@@ -124,10 +124,15 @@ interface AlertProps {
   confirmBtn?: JSX.Element
   cancelBtn?: JSX.Element
   onConfirm?: () => any
+  resetOnHide?: boolean
   confirmText?: string
+  onCancel?: () => any
   cancelText?: string
   onHide?: () => any
+  maxWidth?: number
+  margins?: number
   fixed?: boolean
+  zIndex?: number
   title: string
   body: string
 }
@@ -155,6 +160,11 @@ const defState: InternalState = {
   confirmBtn: undefined,
   onConfirm: undefined,
   cancelBtn: undefined,
+  maxWidth: undefined,
+  onCancel: undefined,
+  resetOnHide: false,
+  margins: undefined,
+  zIndex: undefined,
   onHide: undefined,
   fixed: undefined,
   type: 'alert',
@@ -193,12 +203,22 @@ class AlertTemplate extends PureComponent<HOCProps, InternalState> {
 
   // HIDE ALERT
   public hide() {
+    let this2 = this
+
+    if (this.state.onCancel) this.state.onCancel()
+
     if (!this.state.fixed) {
-      if (this.state.onHide) this.state.onHide()
       const tmpNested: AlertProps | string | undefined = this.state.nested
       this.setState({ open: false, nested: undefined }, () => {
         if (tmpNested) this.show(tmpNested)
       })
+
+      if (this.state.resetOnHide && !tmpNested)
+        setTimeout(function () {
+          this2.setState({ ...defState })
+        }, 300)
+
+      if (this.state.onHide) this.state.onHide()
     }
   }
 
@@ -227,13 +247,13 @@ class AlertTemplate extends PureComponent<HOCProps, InternalState> {
                 ...Styles.alertContainer,
                 ...Styles.openAlert,
                 backdropFilter: this.props.blurred ? 'blur(3px)' : 'none',
-                zIndex: this.props.zIndex || 100
+                zIndex: this.props.zIndex || this.state.zIndex || 100
               }
             : {
                 ...Styles.alertContainer,
                 ...Styles.closeAlert,
                 backdropFilter: this.props.blurred ? 'blur(3px)' : 'none',
-                zIndex: this.props.zIndex || 100
+                zIndex: this.props.zIndex || this.state.zIndex || 100
               }
         }
       >
@@ -242,11 +262,23 @@ class AlertTemplate extends PureComponent<HOCProps, InternalState> {
             this.state.open
               ? {
                   ...Styles.alertContent,
-                  ...Styles.openContent
+                  ...Styles.openContent,
+                  maxWidth: this.state.maxWidth
+                    ? this.state.maxWidth + 'px'
+                    : '455px',
+                  width: this.state.margins
+                    ? 'calc(100% - ' + this.state.margins * 2 + 'px)'
+                    : 'calc(100% - 60px)'
                 }
               : {
                   ...Styles.alertContent,
-                  ...Styles.closeContent
+                  ...Styles.closeContent,
+                  maxWidth: this.state.maxWidth
+                    ? this.state.maxWidth + 'px'
+                    : '455px',
+                  width: this.state.margins
+                    ? 'calc(100% - ' + this.state.margins * 2 + 'px)'
+                    : 'calc(100% - 60px)'
                 }
           }
         >
@@ -307,31 +339,54 @@ class AlertTemplate extends PureComponent<HOCProps, InternalState> {
   }
 }
 
-// GENERAL HOC
-const withAlerts = (Component: React.FC<any>, props?: HOCProps) => {
-  // EMPTY ALERTS
+// PROVIDER
+export const AlertsProvider: React.FC<HOCProps> = (props) => {
   const emptyAlert = () => null
+  const withoutChildren = { ...props }
+  delete withoutChildren.children
 
-  // COMPONENT
-  const withAlertsComponent: React.FC = () => {
-    return (
-      // eslint-disable-next-line react/jsx-fragments
-      <React.Fragment>
-        <Component />
-        <AlertTemplate
-          {...props}
-          ref={(AlertRef) => {
-            window.Alert = AlertRef?.show || emptyAlert
-            window.hideAlert = AlertRef?.forceHide || emptyAlert
-          }}
-        />
-      </React.Fragment>
-    )
-  }
-
-  // RENDER
-  return withAlertsComponent
+  return (
+    // eslint-disable-next-line react/jsx-fragments
+    <React.Fragment>
+      {props.children}
+      <AlertTemplate
+        {...withoutChildren}
+        ref={(AlertRef) => {
+          window.Alert = AlertRef?.show || emptyAlert
+          window.hideAlert = AlertRef?.forceHide || emptyAlert
+        }}
+      />
+    </React.Fragment>
+  )
 }
+
+// GENERAL HOC
+const withAlerts =
+  <T,>(props?: HOCProps) =>
+  (Component: React.FC<T>) => {
+    // EMPTY ALERTS
+    const emptyAlert = () => null
+
+    // COMPONENT
+    const withAlertsComponent: React.FC<T> = (cProps: T) => {
+      return (
+        // eslint-disable-next-line react/jsx-fragments
+        <React.Fragment>
+          <Component {...cProps} />
+          <AlertTemplate
+            {...props}
+            ref={(AlertRef) => {
+              window.Alert = AlertRef?.show || emptyAlert
+              window.hideAlert = AlertRef?.forceHide || emptyAlert
+            }}
+          />
+        </React.Fragment>
+      )
+    }
+
+    // RENDER
+    return withAlertsComponent
+  }
 
 export default withAlerts
 

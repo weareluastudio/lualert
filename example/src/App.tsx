@@ -1,21 +1,25 @@
 import React from 'react'
 
-import withAlerts from 'lualert'
+import Provider from './Prov'
 
 const App = () => {
   return (
-    <button
-      onClick={() =>
-        window.Alert({
-          title: 'Test',
-          body: 'test',
-          type: 'confirm'
-        })
-      }
-    >
-      Show
-    </button>
+    <div>
+      <Provider text='hello'>
+        <button
+          onClick={() =>
+            window.Alert({
+              title: 'Test',
+              body: 'test',
+              type: 'confirm'
+            })
+          }
+        >
+          Show
+        </button>
+      </Provider>
+    </div>
   )
 }
 
-export default withAlerts(App)
+export default App

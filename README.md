@@ -33,7 +33,7 @@ const App = () => {
 }
 
 // ALERT HOC
-export default withAlerts(App)
+export default withAlerts()(App)
 ```
 
 ## withAlerts() Props
@@ -44,13 +44,22 @@ You can define some properties for all alerts in your application, such as color
 
 ```tsx
 // ALERT HOC
-export default withAlerts(App)
+export default withAlerts()(App)
 ```
 
 ```tsx
 // ALERT HOC WITH GLOBAL PROPS
-export default withAlerts(App, { ...props })
+export default withAlerts({ ...props })(App)
 ```
+
+With typescript you must define the component props type
+
+```tsx
+// ALERT HOC WITH GLOBAL PROPS
+export default withAlerts<PropsType>({ ...props })(Component)
+```
+
+All HOC props
 
 | Name         | Type    | Description                                                        | Default | Optional |
 | ------------ | ------- | ------------------------------------------------------------------ | ------- | -------- |
@@ -114,6 +123,8 @@ window.Alert({
 })
 ```
 
+All alert props
+
 | Name           | Type                                        | Description                                                       | Default  | Optional |
 | -------------- | ------------------------------------------- | ----------------------------------------------------------------- | -------- | -------- |
 | type           | 'confirm' \| 'window' \| 'alert' \| 'error' | Define the alert style and interaction.                           | 'alert'  | false    |
@@ -121,13 +132,18 @@ window.Alert({
 | body           | string                                      | Alert content in text plain.                                      | ''       | false    |
 | onConfirm      | method                                      | Dispatch onConfirm method when Accept button is pressed.          | void     | true     |
 | onHide         | method                                      | This method its always called when the Alert is closed.           | void     | true     |
+| onCancel       | method                                      | This method its called when the cancel button is pressed.         | void     | true     |
 | fixed          | boolean                                     | If you set true, the alert never close on some conditions.        | false    | true     |
 | customElements | JSX.Element                                 | Wraps a custom elements or nested elements inside the alert body. | null     | true     |
 | confirmText    | string                                      | Replace the "Accept" label for the current instance.              | "Accept" | true     |
 | confirmBtn     | JSX.ELement                                 | Replace the whole "Accept" button for the current instance.       | null     | true     |
 | cancelText     | string                                      | Replace the "Cancel" label for the current instance.              | "Cancel" | true     |
 | cancelBtn      | JSX.Element                                 | Replace the whole "Cancel" button for the current instance.       | null     | true     |
-| nested         | AlertProps \| string                        | Show an alert after the current hides                             | null     | true     |
+| nested         | AlertProps \| string                        | Show an alert after the current hides.                            | null     | true     |
+| resetOnHide    | boolean                                     | Reset alert content on hide (doesn't work with nested option).    | false    | true     |
+| maxWidth       | number                                      | Set the content box max width.                                    | null     | true     |
+| margins        | number                                      | Set the content box margins.                                      | null     | true     |
+| zIndex         | number                                      | Set the content box z position.                                   | 100      | true     |
 
 ## Global API
 
